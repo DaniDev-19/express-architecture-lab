@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backend Node Simple - API Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/styles/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            SYSTEM ONLINE & OPERATIONAL
+        </div>
+
+        <h1 class="title">Backend Node.js & Express API</h1>
+        <p class="subtitle">
+            Plantilla base de producción para microservicios y APIs RESTful simples con PostgreSQL, autenticación JWT,
+            documentación Swagger e inyección de base de datos.
+        </p>
+
+        <!-- Panel de Estado del Servidor -->
+        <div class="stats-panel">
+            <div class="stats-header">
+                <span>Metrics & Server Health</span>
+                <span id="stat-status" style="color: #10b981; font-weight: 600;">ACTIVE</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">Uptime: <span id="stat-uptime"
+                        class="stat-value stat-highlight">{{UPTIME}}</span></div>
+                <div class="stat-item">Hora Servidor: <span id="stat-time" class="stat-value">{{SERVER_TIME}}</span>
+                </div>
+                <div class="stat-item">RAM Heap: <span id="stat-memory" class="stat-value">{{MEMORY_USAGE}}</span></div>
+                <div class="stat-item">Entorno: <span id="stat-env" class="stat-value">{{NODE_ENV}}</span></div>
+                <div class="stat-item">Runtime: <span id="stat-version" class="stat-value">{{NODE_VERSION}}</span></div>
+                <div class="stat-item">Port: <span id="stat-port" class="stat-value">{{PORT}}</span></div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">src/controllers</div>
+                <p class="card-desc">
+                    Lógica de negocio directa con validaciones inline de campos (<code>!nombre</code>,
+                    <code>isNaN</code>, existencias y unicidad) sin librerías innecesarias.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-title">src/middleware</div>
+                <p class="card-desc">
+                    Inyección de BD (<code>InyectDb</code>), verificación JWT (<code>authenticateToken</code>), logs de
+                    peticiones y control global de errores.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-title">src/routes</div>
+                <p class="card-desc">
+                    Rutas modulares con Router de Express para endpoints RESTful como <code>/api/auth</code> y
+                    <code>/api/academia</code>.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-title">Documentación Swagger</div>
+                <p class="card-desc">
+                    Especificación OpenAPI interactiva en <code>/docs</code> para probar endpoints con autenticación JWT
+                    Bearer en tiempo real.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-title">scripts/generateHash.js</div>
+                <p class="card-desc">
+                    Script CLI ejecutable vía <code>npm run hash &lt;clave&gt;</code> para encriptación de contraseñas
+                    con <code>bcryptjs</code>.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-title">public/ & Error 404</div>
+                <p class="card-desc">
+                    Archivos estáticos integrados con panel de métricas en tiempo real y vista <code>404.html</code>
+                    para rutas inexistentes.
+                </p>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/docs" class="btn btn-primary">
+                Swagger Docs (/docs)
+            </a>
+            <a href="/api/academia" class="btn btn-secondary" target="_blank">
+                API Endpoint (/api/academia)
+            </a>
+        </div>
+    </div>
+
+    <!-- Live Metrics Updater -->
+    <script>
+        async function updateStats() {
+            try {
+                const res = await fetch('/api/server-info');
+                if (res.ok) {
+                    const result = await res.json();
+                    const data = result.data;
+                    if (data) {
+                        if (document.getElementById('stat-uptime')) document.getElementById('stat-uptime').innerText = data.uptime;
+                        if (document.getElementById('stat-time')) document.getElementById('stat-time').innerText = data.serverTime;
+                        if (document.getElementById('stat-memory')) document.getElementById('stat-memory').innerText = data.memoryUsage;
+                        if (document.getElementById('stat-env')) document.getElementById('stat-env').innerText = data.nodeEnv;
+                        if (document.getElementById('stat-version')) document.getElementById('stat-version').innerText = data.nodeVersion;
+                        if (document.getElementById('stat-port')) document.getElementById('stat-port').innerText = data.port;
+                    }
+                }
+            } catch (e) { }
+        }
+        updateStats();
+        setInterval(updateStats, 1000);
+    </script>
+</body>
+
+</html>
